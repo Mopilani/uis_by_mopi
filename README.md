@@ -7,3 +7,9 @@ A project created for building Uis using Flutter framework.
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
+
+## SDKs
+- Flutter 3
+- Dart 3 
+
+### Clone the project and pub get it, and run it 
