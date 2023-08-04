@@ -6,11 +6,11 @@
 
 - Add assets fonts to assets: "assets/fonts/"       - DONE
 
-- Add some fonts [Cairo, Dubai]                 
+- Add some fonts [Cairo, Dubai] or google fonts     - DONE
+
+- Change in android manifest:                       - DONE
+    - Name                          - DONE
+    - Logo                          - DONE
+    - Splash screen                 - DONE
 
 - Add more offline images
-
-- Change in android manifest:
-    - Name                          - DONE
-    - Logo
-    - Splash screen
