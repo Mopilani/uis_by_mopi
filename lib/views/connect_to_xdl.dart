@@ -53,7 +53,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             onPressed: connectionLost
                 ? null
                 : () async {
-                    var res = await http.get(Uri.parse('$serverUrl/add'));
+                    var res = await http.get(Uri.parse('$serverUrl/recover'));
                     if (res.statusCode == 200) {
                       // ignore: use_build_context_synchronously
                       Navigator.pop(context);
