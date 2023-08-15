@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uis_by_mopi/views/cars_shop_view.dart';
+import 'package:uis_by_mopi/views/connect_to_xdl.dart';
 import 'package:uis_by_mopi/views/course_view.dart';
 import 'package:uis_by_mopi/views/courses_app.dart';
 import 'package:uis_by_mopi/views/login_screen.dart';
@@ -48,6 +49,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home Page'),
+        actions: [
+          MaterialButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ConnectToXDL(),
+                ),
+              );
+            },
+             child: const Text('Connect to XDl'),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: pages.length,
