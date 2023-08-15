@@ -7,6 +7,8 @@ import 'package:uis_by_mopi/views/courses_app.dart';
 import 'package:uis_by_mopi/views/login_screen.dart';
 import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
 
+import 'view_xdl_servers.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -55,7 +57,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ConnectToXDL(),
+                  builder: (context) => const ViewXDLServers(),
                 ),
               );
             },
