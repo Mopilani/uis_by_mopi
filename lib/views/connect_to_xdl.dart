@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 class ConnectToXDL extends StatefulWidget {
-  const ConnectToXDL({super.key});
+  const ConnectToXDL({super.key, required this.serverUrl});
+  final String serverUrl;
 
   @override
   State<ConnectToXDL> createState() => _ConnectToXDLState();
@@ -16,8 +18,11 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
   late Timer timer;
   bool connectionLost = true;
 
+  String serverUrl = 'http://167.172.167.245:8186';
+
   @override
   void initState() {
+    serverUrl = widget.serverUrl;
     timer = Timer.periodic(const Duration(seconds: 2), (t) {
       setState(() {});
     });
@@ -29,8 +34,6 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
     timer.cancel();
     super.dispose();
   }
-
-  String serverUrl = 'http://167.172.167.245:8186';
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +56,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             onPressed: connectionLost
                 ? null
                 : () async {
+                    Get.back();
                     var res = await http.get(Uri.parse('$serverUrl/recover'));
                     if (res.statusCode == 200) {
                       // ignore: use_build_context_synchronously
