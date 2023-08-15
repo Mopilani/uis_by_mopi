@@ -43,6 +43,9 @@ class _ViewXDLServersState extends State<ViewXDLServers> {
                 for (var host in snap.data) {
                   children.add(
                     ListTile(
+                      onTap: () {
+                        Get.to(ConnectToXDL(serverUrl: host));
+                      },
                       leading: FutureBuilder<http.Response>(
                         future: () async {
                           print(host + '/ping');
