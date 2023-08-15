@@ -58,21 +58,14 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                 : () async {
                     Get.back();
                     var res = await http.get(Uri.parse('$serverUrl/recover'));
-                    if (res.statusCode == 200) {
-                      // ignore: use_build_context_synchronously
-                      Navigator.pop(context);
-                    }
+                    if (res.statusCode == 200) {}
                   },
           ),
           MaterialButton(
             onPressed: connectionLost
                 ? null
                 : () async {
-                    var res = await http.get(Uri.parse('$serverUrl/shutdown'));
-                    if (res.statusCode == 200) {
-                      // ignore: use_build_context_synchronously
-                      Navigator.pop(context);
-                    }
+                    onUpdate(context);
                   },
             child: const Text('Update'),
           ),
@@ -106,7 +99,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
           }
           if (snap.hasData) {
             body = json.decode(snap.data!.body);
-
+            connectionLost = false;
             return SingleChildScrollView(
               child: Column(
                 children: [
@@ -140,13 +133,27 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                                     ? Colors.green
                                     : Colors.red,
                           ),
-                          trailing: IconButton(
-                            icon: task['running']
-                                ? const Icon(Icons.stop)
-                                : task['finished']
-                                    ? const Icon(Icons.done)
-                                    : const Icon(Icons.play_arrow),
-                            onPressed: task['finished'] ? null : () {},
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.download),
+                                onPressed: task['finished']
+                                    ? null
+                                    : () => onRedownload(
+                                          context,
+                                          task['link'],
+                                        ),
+                              ),
+                              IconButton(
+                                icon: task['running']
+                                    ? const Icon(Icons.stop)
+                                    : task['finished']
+                                        ? const Icon(Icons.download_done)
+                                        : const Icon(Icons.play_arrow),
+                                onPressed: task['finished'] ? null : () {},
+                              ),
+                            ],
                           ),
                         ),
                       );
@@ -169,6 +176,117 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  void onUpdate(context) {
+    dialog(context, [
+      const Text(
+        'Update Server',
+        style: TextStyle(
+          fontSize: 30,
+        ),
+      ),
+      const Text(
+        'All the server tasks will be paused!',
+        style: TextStyle(
+          fontSize: 18,
+        ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            onPressed: Get.back,
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            ),
+          ),
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Colors.black,
+            onPressed: () async {
+              var res = await http.get(Uri.parse('$serverUrl/shutdown'));
+              if (res.statusCode == 200) {
+                Get.back();
+              }
+            },
+            child: const Text(
+              'Update',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ]);
+  }
+
+  void onRedownload(context, String link) {
+    dialog(context, [
+      Text(
+        'Redownload ${link.split('/').last}',
+        style: const TextStyle(
+          fontSize: 30,
+        ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            onPressed: Get.back,
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            ),
+          ),
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Colors.black,
+            onPressed: () async {
+              var res = await http.post(Uri.parse('$serverUrl/redown'),
+                  headers: {'link': link});
+              if (res.statusCode == 200) {
+                Get.back();
+              }
+            },
+            child: const Text(
+              'Redownload',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ]);
   }
 
   Future addNewTask(context) async {
@@ -266,5 +384,29 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
         );
       },
     );
+  }
+
+  void dialog(context, children) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Material(
+                color: Colors.transparent,
+                child: GestureDetector(
+                    onTap: () {},
+                    child: Card(
+                        margin: const EdgeInsets.all(100.0),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: children),
+                        ))),
+              ));
+        });
   }
 }
