@@ -50,12 +50,27 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
           IconButton(
             icon: const Icon(Icons.update_rounded),
             tooltip: 'Recover',
-            onPressed: connectionLost ? null : () {},
+            onPressed: connectionLost
+                ? null
+                : () async {
+                    var res = await http.get(Uri.parse('$serverUrl/add'));
+                    if (res.statusCode == 200) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
+                  },
           ),
-          IconButton(
-            icon: const Icon(Icons.system_update_alt_rounded),
-            tooltip: 'Update',
-            onPressed: connectionLost ? null : () {},
+          MaterialButton(
+            onPressed: connectionLost
+                ? null
+                : () async {
+                    var res = await http.get(Uri.parse('$serverUrl/shutdown'));
+                    if (res.statusCode == 200) {
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
+                  },
+            child: const Text('Update'),
           ),
         ],
       ),
