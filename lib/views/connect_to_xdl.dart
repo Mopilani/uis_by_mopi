@@ -138,12 +138,8 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                             children: [
                               IconButton(
                                 icon: const Icon(Icons.download),
-                                onPressed: task['finished']
-                                    ? null
-                                    : () => onRedownload(
-                                          context,
-                                          task['link'],
-                                        ),
+                                onPressed: () =>
+                                    onRedownload(context, task['link']),
                               ),
                               IconButton(
                                 icon: task['running']
@@ -151,7 +147,27 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                                     : task['finished']
                                         ? const Icon(Icons.download_done)
                                         : const Icon(Icons.play_arrow),
-                                onPressed: task['finished'] ? null : () {},
+                                onPressed: task['finished']
+                                    ? null
+                                    : task['running']
+                                        ? () async {
+                                            var res = await http.get(
+                                              Uri.parse('$serverUrl/stop'),
+                                              headers: {'link': task['link']},
+                                            );
+                                            if (res.statusCode == 200) {
+                                              Get.back();
+                                            }
+                                          }
+                                        : () async {
+                                            var res = await http.get(
+                                              Uri.parse('$serverUrl/resume'),
+                                              headers: {'link': task['link']},
+                                            );
+                                            if (res.statusCode == 200) {
+                                              Get.back();
+                                            }
+                                          },
                               ),
                             ],
                           ),
@@ -272,9 +288,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             onPressed: () async {
               var res = await http.post(Uri.parse('$serverUrl/redown'),
                   headers: {'link': link});
-              if (res.statusCode == 200) {
-                Get.back();
-              }
+              if (res.statusCode == 200) Get.back();
             },
             child: const Text(
               'Redownload',
@@ -360,10 +374,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                                   .post(Uri.parse('$serverUrl/add'), headers: {
                                 'link': linkCont.text,
                               });
-                              if (res.statusCode == 200) {
-                                // ignore: use_build_context_synchronously
-                                Navigator.pop(context);
-                              }
+                              if (res.statusCode == 200) Get.back();
                             },
                             child: const Text(
                               'Add Task',
