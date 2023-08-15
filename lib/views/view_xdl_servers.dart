@@ -23,7 +23,7 @@ class _ViewXDLServersState extends State<ViewXDLServers> {
           if (await file.exists()) {
             return json.decode(await file.readAsString());
           } else {
-            await file.writeAsString(json.encode('[]'));
+            await file.writeAsString(json.encode([]));
           }
         }(),
         builder: (context, snap) {
@@ -45,7 +45,7 @@ class _ViewXDLServersState extends State<ViewXDLServers> {
             );
           }
 
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         },
       ),
       floatingActionButton: FloatingActionButton(
