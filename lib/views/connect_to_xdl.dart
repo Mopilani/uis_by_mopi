@@ -23,7 +23,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
   @override
   void initState() {
     serverUrl = widget.serverUrl;
-    timer = Timer.periodic(const Duration(seconds: 5), (t) {
+    timer = Timer.periodic(const Duration(milliseconds: 5000), (t) {
       setState(() {});
     });
     super.initState();
@@ -111,14 +111,14 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
 
                 // children.add(
                 return ListTile(
-                  title: Text(
+                  title: SelectableText(
                     task['link'].split('/').last,
                     // style: const TextStyle(fontSize: 20),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      SelectableText(
                         task['link'],
                         // task.toString(),
                       ),
@@ -131,10 +131,10 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                   leading: CircleAvatar(
                     // Icons.circle,
                     backgroundColor: task['running']
-                                ? Colors.yellow
-                                : task['finished']
-                                    ? Colors.green
-                                    : Colors.red,
+                        ? Colors.yellow
+                        : task['finished']
+                            ? Colors.green
+                            : Colors.red,
                     child: Text((index + 1).toString()),
                   ),
                   trailing: Row(
@@ -151,7 +151,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                           if (res.statusCode == 200) {
                             setState(() {});
                           }
-                        },  
+                        },
                       ),
                       IconButton(
                         icon: const Icon(Icons.download),
@@ -171,18 +171,14 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                                       Uri.parse('$serverUrl/stop'),
                                       headers: {'link': task['link']},
                                     );
-                                    if (res.statusCode == 200) {
-                                      Get.back();
-                                    }
+                                    if (res.statusCode == 200) {}
                                   }
                                 : () async {
                                     var res = await http.get(
                                       Uri.parse('$serverUrl/resume'),
                                       headers: {'link': task['link']},
                                     );
-                                    if (res.statusCode == 200) {
-                                      Get.back();
-                                    }
+                                    if (res.statusCode == 200) {}
                                   },
                       ),
                     ],

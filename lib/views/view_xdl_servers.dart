@@ -41,37 +41,49 @@ class _ViewXDLServersState extends State<ViewXDLServers> {
               itemCount: snap.data.length,
               itemBuilder: (context, index) {
                 // for (var host in snap.data) {
-                  var host = snap.data[index];
-                  return ListTile(
-                    onTap: () {
-                      Get.to(ConnectToXDL(serverUrl: host));
-                    },
-                    leading: FutureBuilder<http.Response>(
-                      future: () async {
-                        print(host + '/ping');
-                        return http.get(Uri.parse(host + '/ping'));
-                      }(),
-                      builder: (context, snap) {
-                        print(snap.data?.statusCode);
-                        if (snap.hasData) {
-                          return Icon(
-                            Icons.circle,
-                            color: snap.data!.statusCode == 200
-                                ? Colors.green
-                                : Colors.red,
-                          );
-                        }
-                        return const Icon(
+                var host = snap.data[index];
+                return ListTile(
+                  onTap: () {
+                    Get.to(ConnectToXDL(serverUrl: host));
+                  },
+                  leading: FutureBuilder<http.Response>(
+                    future: () async {
+                      // print(host + '/ping');
+                      return http.get(Uri.parse(host + '/ping'));
+                    }(),
+                    builder: (context, snap) {
+                      // print(snap.data?.statusCode);
+                      if (snap.hasData) {
+                        return Icon(
                           Icons.circle,
-                          color: Colors.red,
+                          color: snap.data!.statusCode == 200
+                              ? Colors.green
+                              : Colors.red,
                         );
-                      },
-                    ),
-                    title: Text(
-                      host,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                  );
+                      }
+                      return const Icon(
+                        Icons.circle,
+                        color: Colors.red,
+                      );
+                    },
+                  ),
+                  title: Text(
+                    host,
+                    style: const TextStyle(fontSize: 20),
+                  ),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.disabled_by_default_rounded),
+                    color: Colors.red,
+                    onPressed: () async {
+                      var servers =
+                          json.decode(await xdlServersFile.readAsString());
+
+                      servers.remove(host);
+                      await xdlServersFile.writeAsString(json.encode(servers));
+                      setState(() {});
+                    },
+                  ),
+                );
                 // }
               },
             );
