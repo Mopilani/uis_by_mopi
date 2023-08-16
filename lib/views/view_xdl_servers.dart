@@ -182,6 +182,7 @@ class _ViewXDLServersState extends State<ViewXDLServers> {
                                 var res = await http.get(
                                     Uri.parse('http://${linkCont.text}/ping'));
 
+                                print('Status 200');
                                 if (res.statusCode == 200) {
                                   var servers = json.decode(
                                       await xdlServersFile.readAsString());
@@ -196,6 +197,7 @@ class _ViewXDLServersState extends State<ViewXDLServers> {
                                   setState(() {});
                                   Get.to(ConnectToXDL(
                                       serverUrl: 'http://${linkCont.text}'));
+                                      return;
                                 }
                                 msg.value = 'Cannot connect to this server';
                               },
