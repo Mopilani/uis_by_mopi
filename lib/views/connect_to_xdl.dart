@@ -23,7 +23,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
   @override
   void initState() {
     serverUrl = widget.serverUrl;
-    timer = Timer.periodic(const Duration(seconds: 2), (t) {
+    timer = Timer.periodic(const Duration(seconds: 5), (t) {
       setState(() {});
     });
     super.initState();
@@ -56,9 +56,12 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             onPressed: connectionLost
                 ? null
                 : () async {
-                    Get.back();
+                    print('Recoveringt...');
                     var res = await http.get(Uri.parse('$serverUrl/recover'));
-                    if (res.statusCode == 200) {}
+                    print('StatusCode: ${res.statusCode}');
+                    if (res.statusCode == 200) {
+                      print('MSG: ${res.body}');
+                    }
                   },
           ),
           MaterialButton(
@@ -100,97 +103,97 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
           if (snap.hasData) {
             body = json.decode(snap.data!.body);
             connectionLost = false;
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  ...() {
-                    List<Widget> children = [];
-                    for (var task in body['tasks']) {
-                      children.add(
-                        ListTile(
-                          title: Text(
-                            task['link'].split('/').last,
-                            // style: const TextStyle(fontSize: 20),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                task['link'],
-                                // task.toString(),
-                              ),
-                              Text(
-                                '${!task['running'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
-                                'Size: ${task['size']} - Downloaded: ${task['downloaded']}',
-                              ),
-                            ],
-                          ),
-                          leading: Icon(
-                            Icons.circle,
-                            color: task['running']
+            return ListView.builder(
+              itemCount: body['tasks'].length,
+              itemBuilder: (context, index) {
+                // for (var task in body['tasks']) {
+                var task = body['tasks']![index];
+
+                // children.add(
+                return ListTile(
+                  title: Text(
+                    task['link'].split('/').last,
+                    // style: const TextStyle(fontSize: 20),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        task['link'],
+                        // task.toString(),
+                      ),
+                      Text(
+                        '${!task['running'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
+                        'Size: ${task['size']} - Downloaded: ${task['downloaded']}',
+                      ),
+                    ],
+                  ),
+                  leading: CircleAvatar(
+                    // Icons.circle,
+                    backgroundColor: task['running']
                                 ? Colors.yellow
                                 : task['finished']
                                     ? Colors.green
                                     : Colors.red,
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.delete),
-                                color: Colors.red,
-                                onPressed: () async {
-                                  var res = await http.get(
-                                    Uri.parse('$serverUrl/remove'),
-                                    headers: {'link': task['link']},
-                                  );
-                                  if (res.statusCode == 200) {
-                                    setState(() {});
+                    child: Text((index + 1).toString()),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        color: Colors.red,
+                        onPressed: () async {
+                          var res = await http.get(
+                            Uri.parse('$serverUrl/remove'),
+                            headers: {'link': task['link']},
+                          );
+                          if (res.statusCode == 200) {
+                            setState(() {});
+                          }
+                        },  
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.download),
+                        onPressed: () => onRedownload(context, task['link']),
+                      ),
+                      IconButton(
+                        icon: task['running']
+                            ? const Icon(Icons.stop)
+                            : task['finished']
+                                ? const Icon(Icons.download_done)
+                                : const Icon(Icons.play_arrow),
+                        onPressed: task['finished']
+                            ? null
+                            : task['running']
+                                ? () async {
+                                    var res = await http.get(
+                                      Uri.parse('$serverUrl/stop'),
+                                      headers: {'link': task['link']},
+                                    );
+                                    if (res.statusCode == 200) {
+                                      Get.back();
+                                    }
                                   }
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.download),
-                                onPressed: () =>
-                                    onRedownload(context, task['link']),
-                              ),
-                              IconButton(
-                                icon: task['running']
-                                    ? const Icon(Icons.stop)
-                                    : task['finished']
-                                        ? const Icon(Icons.download_done)
-                                        : const Icon(Icons.play_arrow),
-                                onPressed: task['finished']
-                                    ? null
-                                    : task['running']
-                                        ? () async {
-                                            var res = await http.get(
-                                              Uri.parse('$serverUrl/stop'),
-                                              headers: {'link': task['link']},
-                                            );
-                                            if (res.statusCode == 200) {
-                                              Get.back();
-                                            }
-                                          }
-                                        : () async {
-                                            var res = await http.get(
-                                              Uri.parse('$serverUrl/resume'),
-                                              headers: {'link': task['link']},
-                                            );
-                                            if (res.statusCode == 200) {
-                                              Get.back();
-                                            }
-                                          },
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                    return children;
-                  }(),
-                ],
-              ),
+                                : () async {
+                                    var res = await http.get(
+                                      Uri.parse('$serverUrl/resume'),
+                                      headers: {'link': task['link']},
+                                    );
+                                    if (res.statusCode == 200) {
+                                      Get.back();
+                                    }
+                                  },
+                      ),
+                    ],
+                  ),
+                );
+                // ),
+                // }
+                // );
+                // return children;
+              },
+              // ],
             );
           }
           return const LinearProgressIndicator();
