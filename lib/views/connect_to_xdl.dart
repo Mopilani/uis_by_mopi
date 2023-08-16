@@ -137,6 +137,19 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
+                                icon: const Icon(Icons.delete),
+                                color: Colors.red,
+                                onPressed: () async {
+                                  var res = await http.get(
+                                    Uri.parse('$serverUrl/remove'),
+                                    headers: {'link': task['link']},
+                                  );
+                                  if (res.statusCode == 200) {
+                                    setState(() {});
+                                  }
+                                },
+                              ),
+                              IconButton(
                                 icon: const Icon(Icons.download),
                                 onPressed: () =>
                                     onRedownload(context, task['link']),
