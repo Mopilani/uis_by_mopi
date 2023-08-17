@@ -38,6 +38,7 @@ dependencies:
   get: ^4.6.5
   ionicons: ^0.2.2
   google_fonts: ^5.1.0
+  http: 
   # audioplayers: ^5.0.0
 
 dev_dependencies:
