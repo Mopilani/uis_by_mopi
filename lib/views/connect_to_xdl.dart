@@ -103,16 +103,24 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
           }
           if (snap.hasData) {
             body = json.decode(snap.data!.body);
+            var idx = 0;
+            List<Map> tasks = (body['tasks'] as List)
+                .map(
+                  (e) => {++idx: e},
+                )
+                .toList()
+                .reversed
+                .toList();
             connectionLost = false;
             return ListView.builder(
-              reverse: true,
               itemCount: body['tasks'].length + 1,
               itemBuilder: (context, index) {
                 if (body['tasks'].length == index) {
                   return const SizedBox(height: 80);
                 }
                 // for (var task in body['tasks']) {
-                var task = body['tasks']![index];
+                var task = tasks[index].values.first;
+                print(index);
 
                 // children.add(
                 return ListTile(
@@ -147,7 +155,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                         : task['finished']
                             ? Colors.green
                             : Colors.red,
-                    child: Text((index + 1).toString()),
+                    child: Text((tasks[index].keys.first).toString()),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
