@@ -18,6 +18,11 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
   late Timer timer;
   bool connectionLost = true;
 
+  var running = 0.obs;
+  var waiting = 0.obs;
+  var finished = 0.obs;
+  var started = 0.obs;
+
   String serverUrl = 'http://167.172.167.245:8186';
 
   @override
@@ -25,6 +30,8 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
     serverUrl = widget.serverUrl;
     timer = Timer.periodic(const Duration(milliseconds: 5000), (t) {
       setState(() {});
+      // started++;
+      // started--;
     });
     super.initState();
   }
@@ -40,6 +47,32 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Connected to $serverUrl'),
+        flexibleSpace: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 170, 16),
+          child: Obx(() {
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  'Waiting: $waiting - ',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  'Finished: $finished - ',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  'Started: $started -  ',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                Text(
+                  'Running: $running',
+                  style: const TextStyle(fontSize: 18),
+                ),
+              ],
+            );
+          }),
+        ),
         actions: [
           IconButton(
             tooltip: 'Refresh',
@@ -47,7 +80,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             onPressed: connectionLost
                 ? null
                 : () {
-                    setState(() {});
+                    // setState(() {});
                   },
           ),
           IconButton(
@@ -102,6 +135,12 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             );
           }
           if (snap.hasData) {
+            Future.delayed(const Duration(milliseconds: 100), () {
+              running.value = 0;
+              waiting.value = 0;
+              finished.value = 0;
+              started.value = 0;
+            });
             body = json.decode(snap.data!.body);
             var idx = 0;
             List<Map> tasks = (body['tasks'] as List)
@@ -121,7 +160,12 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                 // for (var task in body['tasks']) {
                 var task = tasks[index].values.first;
                 // print(index);
-
+                Future.delayed(const Duration(milliseconds: 100), () {
+                  if (task['running'] ?? false) running.value++;
+                  if (task['waiting'] ?? false) waiting.value++;
+                  if (task['finished'] ?? false) finished.value++;
+                  if (task['started'] ?? false) started.value++;
+                });
                 // children.add(
                 return ListTile(
                   title: SelectableText(
