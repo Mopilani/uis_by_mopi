@@ -105,6 +105,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             body = json.decode(snap.data!.body);
             connectionLost = false;
             return ListView.builder(
+              reverse: true,
               itemCount: body['tasks'].length + 1,
               itemBuilder: (context, index) {
                 if (body['tasks'].length == index) {
