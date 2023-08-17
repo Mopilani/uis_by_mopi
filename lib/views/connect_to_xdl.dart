@@ -59,6 +59,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                     print('Recoveringt...');
                     var res = await http.get(Uri.parse('$serverUrl/recover'));
                     print('StatusCode: ${res.statusCode}');
+                    print(res.body);
                     if (res.statusCode == 200) {
                       print('MSG: ${res.body}');
                     }
@@ -104,8 +105,11 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             body = json.decode(snap.data!.body);
             connectionLost = false;
             return ListView.builder(
-              itemCount: body['tasks'].length,
+              itemCount: body['tasks'].length + 1,
               itemBuilder: (context, index) {
+                if (body['tasks'].length == index) {
+                  return const SizedBox(height: 80);
+                }
                 // for (var task in body['tasks']) {
                 var task = body['tasks']![index];
 
@@ -118,12 +122,19 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SelectableText(
-                        task['link'],
-                        // task.toString(),
+                      Row(
+                        children: [
+                          SelectableText(
+                            task['link'],
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () => refreshLink(context, task['link']),
+                          )
+                        ],
                       ),
                       Text(
-                        '${!task['running'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
+                        '${!task['running'] || !task['finished'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
                         'Size: ${task['size']} - Downloaded: ${task['downloaded']}',
                       ),
                     ],
@@ -148,6 +159,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                             Uri.parse('$serverUrl/remove'),
                             headers: {'link': task['link']},
                           );
+                          print(res.body);
                           if (res.statusCode == 200) {
                             setState(() {});
                           }
@@ -171,6 +183,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                                       Uri.parse('$serverUrl/stop'),
                                       headers: {'link': task['link']},
                                     );
+                                    print(res.body);
                                     if (res.statusCode == 200) {}
                                   }
                                 : () async {
@@ -178,6 +191,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                                       Uri.parse('$serverUrl/resume'),
                                       headers: {'link': task['link']},
                                     );
+                                    print(res.body);
                                     if (res.statusCode == 200) {}
                                   },
                       ),
@@ -247,6 +261,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             color: Colors.black,
             onPressed: () async {
               var res = await http.get(Uri.parse('$serverUrl/shutdown'));
+              print(res.body);
               if (res.statusCode == 200) {
                 Get.back();
               }
@@ -300,6 +315,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             onPressed: () async {
               var res = await http.post(Uri.parse('$serverUrl/redown'),
                   headers: {'link': link});
+              print(res.body);
               if (res.statusCode == 200) Get.back();
             },
             child: const Text(
@@ -386,6 +402,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                                   .post(Uri.parse('$serverUrl/add'), headers: {
                                 'link': linkCont.text,
                               });
+                              print(res.body);
                               if (res.statusCode == 200) Get.back();
                             },
                             child: const Text(
@@ -407,6 +424,77 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
         );
       },
     );
+  }
+
+  Future refreshLink(context, oldlink) async {
+    TextEditingController linkCont = TextEditingController(text: oldlink);
+    dialog(context, [
+      const Text(
+        'Update Link',
+        style: TextStyle(
+          fontSize: 30,
+        ),
+      ),
+      TextField(
+        controller: linkCont,
+        decoration: InputDecoration(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          hintText: 'Your link new here...',
+        ),
+        onChanged: (t) {},
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            ),
+          ),
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Colors.black,
+            onPressed: () async {
+              if (linkCont.text.isEmpty) {
+                return;
+              }
+              var res =
+                  await http.get(Uri.parse('$serverUrl/refresh/na'), headers: {
+                'link': oldlink,
+                'nLink': linkCont.text,
+              });
+              print(res.body);
+              if (res.statusCode == 200) Get.back();
+            },
+            child: const Text(
+              'Update',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ]);
   }
 
   void dialog(context, children) {
