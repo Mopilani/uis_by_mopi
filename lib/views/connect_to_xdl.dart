@@ -144,7 +144,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                       ),
                       Text(
                         '${!task['running'] || !task['finished'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
-                        'Size: ${task['size']} - Downloaded: ${task['downloaded']}',
+                        'Size: ${nformate(task['size'])} - Downloaded: ${nformate(task['downloaded'])}',
                       ),
                     ],
                   ),
@@ -529,4 +529,24 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
               ));
         });
   }
+}
+
+String nformate(int nm) {
+  if (nm.toString().length < 3) return nm.toString();
+  var segs = <String>[];
+  for (int i = 0; i < nm.toString().length; null) {
+    var seg = '';
+    for (var j = 0; j < 3; j++) {
+      try {
+        seg += nm.toString()[++i];
+      } catch (e) {
+        //
+      }
+    }
+    segs.add(seg);
+    // segs.add('${}'
+    //     '${nm.toString()[i++]}'
+    //     '${nm.toString()[i++]}');
+  }
+  return segs.join(',');
 }
