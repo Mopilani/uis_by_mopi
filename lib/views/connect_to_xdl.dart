@@ -39,7 +39,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Connect To XDL'),
+        title: Text('Connected to $serverUrl'),
         actions: [
           IconButton(
             tooltip: 'Refresh',
@@ -56,7 +56,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             onPressed: connectionLost
                 ? null
                 : () async {
-                    print('Recoveringt...');
+                    print('Recovering...');
                     var res = await http.get(Uri.parse('$serverUrl/recover'));
                     print('StatusCode: ${res.statusCode}');
                     print(res.body);
@@ -120,7 +120,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                 }
                 // for (var task in body['tasks']) {
                 var task = tasks[index].values.first;
-                print(index);
+                // print(index);
 
                 // children.add(
                 return ListTile(
@@ -142,7 +142,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                           )
                         ],
                       ),
-                      Text(
+                      SelectableText(
                         '${!task['running'] || !task['finished'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
                         'Size: ${nformate(task['size'])} - Downloaded: ${nformate(task['downloaded'])}',
                       ),
@@ -536,9 +536,10 @@ String nformate(int nm) {
   var segs = <String>[];
   for (int i = 0; i < nm.toString().length; null) {
     var seg = '';
+    var nmstr = nm.toString().split('').reversed.toList(); 
     for (var j = 0; j < 3; j++) {
       try {
-        seg += nm.toString()[++i];
+        seg += nmstr[i++];
       } catch (e) {
         //
       }
@@ -548,5 +549,5 @@ String nformate(int nm) {
     //     '${nm.toString()[i++]}'
     //     '${nm.toString()[i++]}');
   }
-  return segs.join(',');
+  return segs.reversed.toList().join(',');
 }
