@@ -143,7 +143,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                         ],
                       ),
                       SelectableText(
-                        '${!task['running'] || !task['finished'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
+                        '${!task['running'] ? 'In Waiting List - Retry After: ${task['tryAfter']} - ' : ''}'
                         'Size: ${nformate(task['size'])} - Downloaded: ${nformate(task['downloaded'])}',
                       ),
                     ],
@@ -533,21 +533,19 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
 
 String nformate(int nm) {
   if (nm.toString().length < 3) return nm.toString();
+  // return nm.toString();
   var segs = <String>[];
   for (int i = 0; i < nm.toString().length; null) {
     var seg = '';
-    var nmstr = nm.toString().split('').reversed.toList(); 
+    var nmstr = nm.toString().split('').reversed.toList();
     for (var j = 0; j < 3; j++) {
       try {
-        seg += nmstr[i++];
+        seg += nmstr[i + 1 > nm.toString().length ? i : i++];
       } catch (e) {
-        //
+        // print(e);
       }
     }
-    segs.add(seg);
-    // segs.add('${}'
-    //     '${nm.toString()[i++]}'
-    //     '${nm.toString()[i++]}');
+    segs.add(seg.split('').reversed.join());
   }
   return segs.reversed.toList().join(',');
 }
