@@ -1,10 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:uis_by_mopi/views/cars_shop_view.dart';
-import 'package:uis_by_mopi/views/course_view.dart';
-import 'package:uis_by_mopi/views/courses_app.dart';
-import 'package:uis_by_mopi/views/login_screen.dart';
-import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
 
 import 'downloads_view.dart';
 import 'view_xdl_servers.dart';
