@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             },
-             child: const Text('Connect to XDl'),
+             child: const Text('Connect to XDL'),
           ),
         ],
       ),

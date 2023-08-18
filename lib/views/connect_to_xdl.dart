@@ -30,8 +30,6 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
     serverUrl = widget.serverUrl;
     timer = Timer.periodic(const Duration(milliseconds: 5000), (t) {
       setState(() {});
-      // started++;
-      // started--;
     });
     super.initState();
   }
@@ -145,7 +143,15 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
             var idx = 0;
             List<Map> tasks = (body['tasks'] as List)
                 .map(
-                  (e) => {++idx: e},
+                  (e) {
+                    Future.delayed(const Duration(milliseconds: 100), () {
+                  if (e['running'] ?? false) running.value++;
+                  if (e['waiting'] ?? false) waiting.value++;
+                  if (e['finished'] ?? false) finished.value++;
+                  if (e['started'] ?? false) started.value++;
+                });
+                    return {++idx: e};
+                  },
                 )
                 .toList()
                 .reversed
@@ -160,12 +166,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                 // for (var task in body['tasks']) {
                 var task = tasks[index].values.first;
                 // print(index);
-                Future.delayed(const Duration(milliseconds: 100), () {
-                  if (task['running'] ?? false) running.value++;
-                  if (task['waiting'] ?? false) waiting.value++;
-                  if (task['finished'] ?? false) finished.value++;
-                  if (task['started'] ?? false) started.value++;
-                });
+
                 // children.add(
                 return ListTile(
                   title: SelectableText(
@@ -386,6 +387,7 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
 
   Future addNewTask(context) async {
     TextEditingController linkCont = TextEditingController();
+    var fastDownload = false.obs;
     showDialog(
       context: context,
       builder: (context) {
@@ -420,6 +422,27 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                         ),
                         onChanged: (t) {},
                       ),
+                      SizedBox(
+                        height: 50,
+                        width: 200,
+                        child: Row(
+                          children: [
+                            Obx(() {
+                              return Expanded(
+                                child: CheckboxListTile(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  title: const Text('Fast Download'),
+                                  value: fastDownload.value,
+                                  onChanged: (v) => fastDownload.value =
+                                      v ?? fastDownload.value,
+                                ),
+                              );
+                            })
+                          ],
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
@@ -451,10 +474,20 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                               if (linkCont.text.isEmpty) {
                                 return;
                               }
-                              var res = await http
-                                  .post(Uri.parse('$serverUrl/add'), headers: {
-                                'link': linkCont.text,
-                              });
+                              http.Response res;
+                              if (fastDownload.value) {
+                                res = await http.post(
+                                    Uri.parse('$serverUrl/fdl'),
+                                    headers: {
+                                      'link': linkCont.text,
+                                    });
+                              } else {
+                                res = await http.post(
+                                    Uri.parse('$serverUrl/add'),
+                                    headers: {
+                                      'link': linkCont.text,
+                                    });
+                              }
                               print(res.body);
                               if (res.statusCode == 200) Get.back();
                             },
