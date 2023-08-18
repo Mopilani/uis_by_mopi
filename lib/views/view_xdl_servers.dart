@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,10 +17,26 @@ class ViewXDLServers extends StatefulWidget {
 
 class _ViewXDLServersState extends State<ViewXDLServers> {
   var xdlServersFile = File('.s.xdl');
+  late Timer timer;
+
+  @override
+  void initState() {
+    timer = Timer.periodic(const Duration(milliseconds: 5000), (t) {
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      
       appBar: AppBar(
         title: const Text('XDL Servers'),
       ),
