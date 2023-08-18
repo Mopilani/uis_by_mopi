@@ -145,11 +145,11 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
                 .map(
                   (e) {
                     Future.delayed(const Duration(milliseconds: 100), () {
-                  if (e['running'] ?? false) running.value++;
-                  if (e['waiting'] ?? false) waiting.value++;
-                  if (e['finished'] ?? false) finished.value++;
-                  if (e['started'] ?? false) started.value++;
-                });
+                      if (e['running'] ?? false) running.value++;
+                      if (e['waiting'] ?? false) waiting.value++;
+                      if (e['finished'] ?? false) finished.value++;
+                      if (e['started'] ?? false) started.value++;
+                    });
                     return {++idx: e};
                   },
                 )
@@ -582,30 +582,6 @@ class _ConnectToXDLState extends State<ConnectToXDL> {
       ),
     ]);
   }
-
-  void dialog(context, children) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Material(
-                color: Colors.transparent,
-                child: GestureDetector(
-                    onTap: () {},
-                    child: Card(
-                        margin: const EdgeInsets.all(100.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: children),
-                        ))),
-              ));
-        });
-  }
 }
 
 String nformate(int nm) {
@@ -625,4 +601,28 @@ String nformate(int nm) {
     segs.add(seg.split('').reversed.join());
   }
   return segs.reversed.toList().join(',');
+}
+
+void dialog(context, children) {
+  showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Material(
+              color: Colors.transparent,
+              child: GestureDetector(
+                  onTap: () {},
+                  child: Card(
+                      margin: const EdgeInsets.all(100.0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: children),
+                      ))),
+            ));
+      });
 }
