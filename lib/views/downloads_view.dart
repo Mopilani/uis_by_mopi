@@ -17,6 +17,9 @@ class DownloadsView extends StatefulWidget {
 class _DownloadsViewState extends State<DownloadsView> {
   RxList<DownloadedItem> items = <DownloadedItem>[].obs;
   var saveFile = File('file.maf.json');
+  RxInt downloadedCount = 0.obs;
+  RxInt uploadedCount = 0.obs;
+  RxInt checkedCount = 0.obs;
 
   @override
   void initState() {
@@ -28,6 +31,20 @@ class _DownloadsViewState extends State<DownloadsView> {
       }
     });
     super.initState();
+  }
+
+  void reCount() {
+    downloadedCount.value = 0;
+    uploadedCount.value = 0;
+    checkedCount.value = 0;
+    for (var e in items) {
+      for (int i = 0; i < e.parts.length; i++) {
+        var p = e.parts[i];
+        if (p.downloaded) downloadedCount.value++;
+        if (p.uploaded) uploadedCount.value++;
+        if (p.checked) checkedCount.value++;
+      }
+    }
   }
 
   @override
@@ -50,8 +67,22 @@ class _DownloadsViewState extends State<DownloadsView> {
             ),
           ),
         ],
+        flexibleSpace: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Obx(() {
+                return Text(
+                  'Downloaded: $downloadedCount  |  Checked: $checkedCount  |  Uploaded: $uploadedCount',
+                );
+              }),
+            ),
+          ],
+        ),
       ),
       body: Obx(() {
+        Future.delayed(const Duration(seconds: 1), () => reCount());
         return ListView.builder(
           itemCount: items.length,
           itemBuilder: (context, index) {
@@ -83,6 +114,52 @@ class _DownloadsViewState extends State<DownloadsView> {
                       onAddPart(context, index, null);
                     },
                   ),
+                  Column(
+                    children: e.parts.map((part) {
+                      return Row(
+                        children: [
+                          SizedBox(
+                            width: 25,
+                            child: IconButton(
+                              iconSize: 15,
+                              padding: const EdgeInsets.all(2),
+                              onPressed: () {},
+                              color: part.uploaded ? Colors.green : Colors.red,
+                              icon: const Icon(Icons.circle),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 25,
+                            child: IconButton(
+                              iconSize: 15,
+                              padding: const EdgeInsets.all(2),
+                              onPressed: () {},
+                              color: part.checked ? Colors.green : Colors.red,
+                              icon: const Icon(Icons.circle),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 25,
+                            child: IconButton(
+                              iconSize: 15,
+                              onPressed: () {
+                                part.downloaded = !part.downloaded;
+                                var dryItems =
+                                    items.map((e) => e.asMap()).toList();
+                                var jsn = json.encode(dryItems);
+                                saveFile.writeAsString(jsn);
+                                Get.back();
+                              },
+                              padding: const EdgeInsets.all(2),
+                              color:
+                                  part.downloaded ? Colors.green : Colors.red,
+                              icon: const Icon(Icons.circle),
+                            ),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  )
                 ],
               ),
               title: SizedBox(height: 20, child: SelectableText(e.title)),
@@ -98,12 +175,20 @@ class _DownloadsViewState extends State<DownloadsView> {
                       var p = e.parts[partIndex];
                       return Row(
                         children: [
-                          SelectableText('${p.title} | ${p.link}'),
-                          IconButton(
-                            icon: const Icon(Icons.edit),
-                            onPressed: () {
-                              onAddPart(context, index, partIndex);
-                            },
+                          Expanded(
+                            child: SelectableText(
+                                '${partIndex + 1}: ${p.link.contains('part') ? p.link.substring(p.link.indexOf('part'), p.link.indexOf('part') + 5) : p.link} | ${p.link}'),
+                          ),
+                          SizedBox(
+                            height: 25,
+                            child: IconButton(
+                              icon: const Icon(Icons.edit),
+                              iconSize: 15,
+                              padding: const EdgeInsets.all(4),
+                              onPressed: () {
+                                onAddPart(context, index, partIndex);
+                              },
+                            ),
                           ),
                         ],
                       );
@@ -342,9 +427,9 @@ class _DownloadsViewState extends State<DownloadsView> {
               saveFile.writeAsString(jsn);
               Get.back();
             },
-            child: Text(
-              index == null ? 'Add' : 'Update',
-              style: const TextStyle(
+            child: const Text(
+              'Delete',
+              style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
               ),
@@ -363,6 +448,7 @@ class _DownloadsViewState extends State<DownloadsView> {
     var downloaded = false.obs;
     var checked = false.obs;
     var uploaded = false.obs;
+    var multiAdd = false.obs;
 
     if (partindex != null) {
       var part = items[index].parts[partindex];
@@ -409,7 +495,13 @@ class _DownloadsViewState extends State<DownloadsView> {
             contentPadding: const EdgeInsets.all(4),
             hintText: 'Your link here...',
           ),
-          onChanged: (t) {},
+          onChanged: (t) {
+            try {
+              titleCont.text = (t.split('/').last.toUpperCase());
+            } catch (e) {
+              //
+            }
+          },
         ),
       ),
       Row(
@@ -475,6 +567,13 @@ class _DownloadsViewState extends State<DownloadsView> {
                 title: const Text('Uploaded'),
               ),
             ),
+            Expanded(
+              child: CheckboxListTile(
+                value: multiAdd.value,
+                onChanged: (v) => multiAdd.value = v ?? false,
+                title: const Text('Multi Add'),
+              ),
+            ),
           ],
         );
       }),
@@ -506,27 +605,47 @@ class _DownloadsViewState extends State<DownloadsView> {
             onPressed: () async {
               if (titleCont.text.isEmpty) return;
               DownloadedPart part;
-              if (partindex != null) {
-                part = items[index].parts[partindex];
+              List<String> links = [];
+              if (multiAdd.value) {
+                links = linkCont.text.split('http');
+                links.remove('');
+                links = links.map((link) => 'http$link').toList();
               } else {
-                part = DownloadedPart();
+                links.add(linkCont.text);
               }
-              part.title = titleCont.text;
-              part.link = linkCont.text;
-              if (int.tryParse(sizeCont.text) != null) {
-                part.size = int.parse(linkCont.text);
+              for (int i = 0; i < links.length; i++) {
+                var link = links[i];
+                if (partindex != null && !multiAdd.value) {
+                  part = items[index].parts[partindex];
+                } else {
+                  part = DownloadedPart();
+                }
+                // print(links); // print(links.length); // return; // if (multiAdd.value) { dynamic link = linkCont.text;
+                //   link = link.split(link.substring(link.indexOf('part'), 1)); link = link.join('part${i + 1}');  linkCont.text = link;
+                //   // p.link.contains('part') ? p.link.substring(p.link.indexOf('part'), p.link.indexOf('part') + 5) : p.link | p.link
+                // }
+                part.title = titleCont.text;
+                if (multiAdd.value) {
+                  part.link = link;
+                } else {
+                  part.link = linkCont.text;
+                }
+                if (int.tryParse(sizeCont.text) != null) {
+                  part.size = int.parse(sizeCont.text);
+                }
+                if (int.tryParse(downloadedCont.text) != null) {
+                  part.downloadedBytes = int.parse(downloadedCont.text);
+                }
+                part.downloaded = downloaded.value;
+                part.checked = checked.value;
+                part.uploaded = uploaded.value;
+                if (partindex != null) {
+                  part = items[index].parts[partindex] = part;
+                } else {
+                  items[index].parts.add(part);
+                }
               }
-              if (int.tryParse(downloadedCont.text) != null) {
-                part.downloadedBytes = int.parse(linkCont.text);
-              }
-              part.downloaded = downloaded.value;
-              part.checked = checked.value;
-              part.uploaded = uploaded.value;
-              if (partindex != null) {
-                part = items[index].parts[partindex] = part;
-              } else {
-                items[index].parts.add(part);
-              }
+              // return;
               // setState(() {});
               // var res = await http.get(Uri.parse('$serverUrl/shutdown'));
               // print(res.body);
