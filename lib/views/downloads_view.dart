@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'connect_to_xdl.dart';
+import 'dl_list_tile.dart';
 
 class DownloadsView extends StatefulWidget {
   const DownloadsView({super.key});
@@ -14,8 +15,7 @@ class DownloadsView extends StatefulWidget {
 }
 
 class _DownloadsViewState extends State<DownloadsView> {
-  List<DownloadedItem> items = [];
-  var itemsCounter = 0;
+  RxList<DownloadedItem> items = <DownloadedItem>[].obs;
   var saveFile = File('file.maf.json');
 
   @override
@@ -45,53 +45,96 @@ class _DownloadsViewState extends State<DownloadsView> {
             child: IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
-                onAddItem(context);
+                onAddItem(context, null);
               },
             ),
           ),
         ],
       ),
-      body: Column(
-        children: () {
-          itemsCounter = 0;
-          return items.map(
-            (e) {
-              itemsCounter++;
-              return ListTile(
-                tileColor: itemsCounter.isEven ? null : Colors.black12,
-                title: SelectableText(e.title),
-                trailing: MaterialButton(
-                  child: const Text('Add Part'),
-                  onPressed: () {
-                    onAddPart(context, itemsCounter - 1);
-                  },
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SelectableText(e.link),
-                    ...e.parts
-                        .map(
-                          (e) => Row(
-                            children: [
-                              SelectableText('${e.title} | ${e.link}'),
-                            ],
+      body: Obx(() {
+        return ListView.builder(
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            var e = items[index];
+            return DLListTile(
+              tileColor: index.isEven ? Colors.black26 : Colors.black12,
+              leading: Column(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      onAddItem(context, index);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    color: Colors.red,
+                    onPressed: () {
+                      deleteItem(context, index);
+                    },
+                  ),
+                ],
+              ),
+              trailing: Column(
+                children: [
+                  MaterialButton(
+                    child: const Text('Add Part'),
+                    onPressed: () {
+                      onAddPart(context, index, null);
+                    },
+                  ),
+                ],
+              ),
+              title: SizedBox(height: 20, child: SelectableText(e.title)),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SelectableText(e.link),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: e.parts.length,
+                    itemBuilder: (context, partIndex) {
+                      var p = e.parts[partIndex];
+                      return Row(
+                        children: [
+                          SelectableText('${p.title} | ${p.link}'),
+                          IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () {
+                              onAddPart(context, index, partIndex);
+                            },
                           ),
-                        )
-                        .toList(),
-                  ],
-                ),
-              );
-            },
-          ).toList();
-        }(),
-      ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }),
     );
   }
 
-  void onAddItem(context) {
+  void onAddItem(BuildContext context, int? index) {
     TextEditingController linkCont = TextEditingController();
     TextEditingController titleCont = TextEditingController();
+    TextEditingController whoWantItCont = TextEditingController();
+    FocusNode whoWantItNode = FocusNode();
+    TextEditingController whoHaveItCont = TextEditingController();
+    FocusNode whoHaveItNode = FocusNode();
+    RxList<String> whoHaveIt = <String>[].obs;
+    RxList<String> whoWantIt = <String>[].obs;
+
+    if (index != null) {
+      var item = items[index];
+      linkCont.text = item.link;
+      titleCont.text = item.title;
+      whoHaveIt.addAll(item.whoHaveIt);
+      whoWantIt.addAll(item.whoWantIt);
+    }
 
     dialog(context, [
       const Text(
@@ -120,8 +163,81 @@ class _DownloadsViewState extends State<DownloadsView> {
           ),
           hintText: 'Your link here...',
         ),
-        onChanged: (t) {},
+        onChanged: (t) {
+          try {
+            titleCont.text = (t.split('/').last.toUpperCase());
+          } catch (e) {
+            //
+          }
+        },
       ),
+      Row(
+        children: [
+          Expanded(
+            child: SizedBox(
+              height: 40,
+              child: TextField(
+                controller: whoWantItCont,
+                focusNode: whoWantItNode,
+                decoration: InputDecoration(
+                  labelText: 'Who want it',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  contentPadding: const EdgeInsets.all(4),
+                  hintText: 'example@email.com',
+                ),
+                onChanged: (t) {},
+                onSubmitted: (t) {
+                  whoWantIt.add(t);
+                  whoWantItCont.clear();
+                  whoWantItNode.requestFocus();
+                },
+              ),
+            ),
+          ),
+          const SizedBox(width: 32),
+          Expanded(
+            child: SizedBox(
+              height: 40,
+              child: TextField(
+                controller: whoHaveItCont,
+                focusNode: whoHaveItNode,
+                decoration: InputDecoration(
+                  labelText: 'Who have it',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  contentPadding: const EdgeInsets.all(4),
+                  hintText: 'example@email.com',
+                ),
+                onChanged: (t) {},
+                onSubmitted: (t) {
+                  whoHaveIt.add(t);
+                  whoHaveItCont.clear();
+                  whoHaveItNode.requestFocus();
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+      Obx(() {
+        return Wrap(
+          children: [
+            const Text('Want it: '),
+            ...whoWantIt.map((e) => Text('$e, ')).toList()
+          ],
+        );
+      }),
+      Obx(() {
+        return Wrap(
+          children: [
+            const Text('Have it: '),
+            ...whoHaveIt.map((e) => SelectableText('$e, ')).toList()
+          ],
+        );
+      }),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -149,10 +265,21 @@ class _DownloadsViewState extends State<DownloadsView> {
             color: Colors.black,
             onPressed: () async {
               if (titleCont.text.isEmpty) return;
-              var item = DownloadedItem();
+              DownloadedItem item;
+              if (index != null) {
+                item = items[index];
+              } else {
+                item = DownloadedItem();
+              }
               item.title = titleCont.text;
               item.link = linkCont.text;
-              items.add(item);
+              item.whoWantIt = whoWantIt.toList();
+              item.whoHaveIt = whoHaveIt.toList();
+              if (index != null) {
+                items[index] = (item);
+              } else {
+                items.add(item);
+              }
               setState(() {});
               // var res = await http.get(Uri.parse('$serverUrl/shutdown'));
               // print(res.body);
@@ -161,11 +288,10 @@ class _DownloadsViewState extends State<DownloadsView> {
               var jsn = json.encode(dryItems);
               saveFile.writeAsString(jsn);
               Get.back();
-              // }
             },
-            child: const Text(
-              'Add',
-              style: TextStyle(
+            child: Text(
+              index == null ? 'Add' : 'Update',
+              style: const TextStyle(
                 fontSize: 20,
                 color: Colors.white,
               ),
@@ -176,20 +302,78 @@ class _DownloadsViewState extends State<DownloadsView> {
     ]);
   }
 
-  void onAddPart(context, index) {
+  void deleteItem(BuildContext context, int? index) {
+    dialog(context, [
+      const Text(
+        'Delete Item',
+        style: TextStyle(
+          fontSize: 30,
+        ),
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            onPressed: Get.back,
+            child: const Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            ),
+          ),
+          MaterialButton(
+            padding: const EdgeInsets.all(16.0),
+            minWidth: 150,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Colors.black,
+            onPressed: () async {
+              items.removeAt(index!);
+              var dryItems = items.map((e) => e.asMap()).toList();
+              var jsn = json.encode(dryItems);
+              saveFile.writeAsString(jsn);
+              Get.back();
+            },
+            child: Text(
+              index == null ? 'Add' : 'Update',
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ]);
+  }
+
+  void onAddPart(BuildContext context, int index, int? partindex) {
     TextEditingController linkCont = TextEditingController();
     TextEditingController titleCont = TextEditingController();
     TextEditingController sizeCont = TextEditingController();
     TextEditingController downloadedCont = TextEditingController();
-    TextEditingController whoWantItCont = TextEditingController();
-    FocusNode whoWantItNode = FocusNode();
-    TextEditingController whoHaveItCont = TextEditingController();
-    FocusNode whoHaveItNode = FocusNode();
-    RxList<String> whoHaveIt = <String>[].obs;
-    RxList<String> whoWantIt = <String>[].obs;
     var downloaded = false.obs;
     var checked = false.obs;
     var uploaded = false.obs;
+
+    if (partindex != null) {
+      var part = items[index].parts[partindex];
+      linkCont.text = part.link;
+      titleCont.text = part.title;
+      checked.value = part.checked;
+      downloaded.value = part.downloaded;
+      uploaded.value = part.uploaded;
+      downloadedCont.text = part.downloadedBytes.toString();
+      sizeCont.text = part.size.toString();
+    }
 
     dialog(context, [
       const Text(
@@ -267,57 +451,6 @@ class _DownloadsViewState extends State<DownloadsView> {
           ),
         ],
       ),
-      Row(
-        children: [
-          Expanded(
-            child: SizedBox(
-              height: 40,
-              child: TextField(
-                controller: whoWantItCont,
-                focusNode: whoWantItNode,
-                decoration: InputDecoration(
-                  labelText: 'Who want it',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  contentPadding: const EdgeInsets.all(4),
-                  hintText: 'example@email.com',
-                ),
-                onChanged: (t) {},
-                onSubmitted: (t) {
-                  whoWantIt.add(t);
-                  whoWantItCont.clear();
-                  whoWantItNode.requestFocus();
-                },
-              ),
-            ),
-          ),
-          const SizedBox(width: 32),
-          Expanded(
-            child: SizedBox(
-              height: 40,
-              child: TextField(
-                controller: whoHaveItCont,
-                focusNode: whoHaveItNode,
-                decoration: InputDecoration(
-                  labelText: 'Who have it',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  contentPadding: const EdgeInsets.all(4),
-                  hintText: 'example@email.com',
-                ),
-                onChanged: (t) {},
-                onSubmitted: (t) {
-                  whoHaveIt.add(t);
-                  whoHaveItCont.clear();
-                  whoHaveItNode.requestFocus();
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
       Obx(() {
         return Row(
           children: [
@@ -342,22 +475,6 @@ class _DownloadsViewState extends State<DownloadsView> {
                 title: const Text('Uploaded'),
               ),
             ),
-          ],
-        );
-      }),
-      Obx(() {
-        return Wrap(
-          children: [
-            const Text('Want it: '),
-            ...whoWantIt.map((e) => Text('$e, ')).toList()
-          ],
-        );
-      }),
-      Obx(() {
-        return Wrap(
-          children: [
-            const Text('Have it: '),
-            ...whoHaveIt.map((e) => SelectableText('$e, ')).toList()
           ],
         );
       }),
@@ -388,7 +505,12 @@ class _DownloadsViewState extends State<DownloadsView> {
             color: Colors.black,
             onPressed: () async {
               if (titleCont.text.isEmpty) return;
-              var part = DownloadedPart();
+              DownloadedPart part;
+              if (partindex != null) {
+                part = items[index].parts[partindex];
+              } else {
+                part = DownloadedPart();
+              }
               part.title = titleCont.text;
               part.link = linkCont.text;
               if (int.tryParse(sizeCont.text) != null) {
@@ -400,10 +522,12 @@ class _DownloadsViewState extends State<DownloadsView> {
               part.downloaded = downloaded.value;
               part.checked = checked.value;
               part.uploaded = uploaded.value;
-              part.whoWantIt = whoWantIt.toList();
-              part.whoHaveIt = whoHaveIt.toList();
-              items[index].parts.add(part);
-              setState(() {});
+              if (partindex != null) {
+                part = items[index].parts[partindex] = part;
+              } else {
+                items[index].parts.add(part);
+              }
+              // setState(() {});
               // var res = await http.get(Uri.parse('$serverUrl/shutdown'));
               // print(res.body);
               // if (res.statusCode == 200) {
@@ -434,9 +558,14 @@ class DownloadedItem {
 
   List<DownloadedPart> parts = [];
 
+  List<String> whoWantIt = [];
+  List<String> whoHaveIt = [];
+
   Map<String, dynamic> asMap() => {
         'link': link,
         'title': title,
+        'whoWantIt': whoWantIt,
+        'whoHaveIt': whoHaveIt,
         'parts': parts.map((e) => e.asMap()).toList(),
       };
 
@@ -444,7 +573,15 @@ class DownloadedItem {
     DownloadedItem part = DownloadedItem();
     part.title = data['title'];
     part.link = data['link'];
-    part.parts = data['parts'];
+    part.whoWantIt = <String>[...data['whoWantIt'] ?? []];
+    part.whoHaveIt = <String>[...data['whoHaveIt'] ?? []];
+    part.parts = <DownloadedPart>[
+      ...(data['parts'])
+          .map(
+            (e) => DownloadedPart.fromMap(e),
+          )
+          .toList()
+    ];
     return part;
   }
 }
@@ -457,9 +594,6 @@ class DownloadedPart {
   int size = 0, downloadedBytes = 0;
   bool downloaded = false, checked = false, uploaded = false;
 
-  List<String> whoWantIt = [];
-  List<String> whoHaveIt = [];
-
   Map<String, dynamic> asMap() => {
         'title': title,
         'link': link,
@@ -468,8 +602,6 @@ class DownloadedPart {
         'downloaded': downloaded,
         'checked': checked,
         'uploaded': uploaded,
-        'whoWantIt': whoWantIt,
-        'whoHaveIt': whoHaveIt,
       };
 
   static DownloadedPart fromMap(Map data) {
@@ -481,8 +613,6 @@ class DownloadedPart {
     part.downloaded = data['downloaded'];
     part.checked = data['checked'];
     part.uploaded = data['uploaded'];
-    part.whoWantIt = data['whoWantIt'];
-    part.whoHaveIt = data['whoHaveIt'];
     return part;
   }
 }
