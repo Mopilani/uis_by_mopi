@@ -67,6 +67,9 @@ class _ViewXDLServersState extends State<ViewXDLServers> {
                       Get.to(ConnectToXDL(serverUrl: host));
                     },
                     leading: FutureBuilder<http.Response>(
+                      future: Future.delayed(
+                        const Duration(seconds: 0),
+                      ),
                       // future: () async {
                       //   // print(host + '/ping');
                       //   return http.get(Uri.parse(host + '/ping'));
