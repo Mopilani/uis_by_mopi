@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:uis_by_mopi/views/cars_shop_view.dart';
 import 'package:uis_by_mopi/views/course_view.dart';
 import 'package:uis_by_mopi/views/courses_app.dart';
+import 'package:uis_by_mopi/views/courses_app_2.dart';
 import 'package:uis_by_mopi/views/login_screen.dart';
 import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
 
@@ -39,6 +40,10 @@ class _HomePageState extends State<HomePage> {
       const CourseView(),
       'Course View',
     ),
+    // Item(
+    //   const CoursesView1(),
+    //   'Courses App 2',
+    // ),
     Item(
       const LoginScreen(),
       'Login Screen',
