@@ -19,7 +19,7 @@ class _WhatsappChatViewState extends State<WhatsappChatView> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-            image: AssetImage("assets/background.png"), fit: BoxFit.cover),
+            image: AssetImage("assets/whatsapp/background.png"), fit: BoxFit.cover),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -34,7 +34,7 @@ class _WhatsappChatViewState extends State<WhatsappChatView> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(40.0),
                   image: const DecorationImage(
-                      image: AssetImage("assets/dancamdev.png")),
+                      image: AssetImage("assets/whatsapp/dancamdev.png")),
                 ),
               ),
               const SizedBox(width: 16.0),
