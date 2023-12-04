@@ -18,11 +18,11 @@ class TwitterUiView extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(100.0),
-              image: const DecorationImage(image: AssetImage("assets/dancamdev.png")),
+              image: const DecorationImage(image: AssetImage("assets/images/twitter/dancamdev.png")),
             ),
           ),
         ),
-        title: Image.asset("assets/twitter.png", height: 30.0),
+        title: Image.asset("assets/images/twitter/twitter.png", height: 30.0),
         centerTitle: true,
         actions: const [
           Padding(
@@ -73,7 +73,7 @@ class _Tweet extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Flexible(flex: 1, child: _ProfileImage(path: "assets/elon.jpg")),
+              const Flexible(flex: 1, child: _ProfileImage(path: "assets/images/twitter/elon.jpg")),
               Flexible(flex: 5, child: _TextAndButtons(text: text)),
             ],
           ),

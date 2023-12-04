@@ -1,16 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:uis_by_mopi/views/amazon_view.dart';
 import 'package:uis_by_mopi/views/cars_shop_view.dart';
 import 'package:uis_by_mopi/views/course_view.dart';
 import 'package:uis_by_mopi/views/courses_app.dart';
 import 'package:uis_by_mopi/views/courses_app_2.dart';
 import 'package:uis_by_mopi/views/login_screen.dart';
 import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
-
-import 'movies_app.dart';
-import 'twitter_view.dart';
-import 'view_xdl_servers.dart';
-import 'whatsapp_chat_ui.dart';
+import 'package:uis_by_mopi/views/movies_app.dart';
+import 'package:uis_by_mopi/views/spotify_view.dart';
+import 'package:uis_by_mopi/views/twitter_view.dart';
+import 'package:uis_by_mopi/views/view_xdl_servers.dart';
+import 'package:uis_by_mopi/views/whatsapp_chat_ui.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -52,8 +53,20 @@ class _HomePageState extends State<HomePage> {
       'Course View',
     ),
     Item(
+      const AmazonView(),
+      'Amazon',
+    ),
+    Item(
+      const SpotifyView(),
+      'Spotify',
+    ),
+    Item(
       const MoviesApp(),
       'Movies App',
+    ),
+    Item(
+      const AmazonView(),
+      'Amazon App',
     ),
     // Item(
     //   const CoursesView1(),
@@ -80,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             },
-             child: const Text('Connect to XDL'),
+            child: const Text('Connect to XDL'),
           ),
         ],
       ),

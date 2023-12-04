@@ -68,6 +68,10 @@ flutter:
   assets:
     - assets/images/
     - assets/images/movies/
+    - assets/images/whatsapp/
+    - assets/images/twitter/
+    - assets/images/spotify/
+    - assets/images/amazon/
     # - assets/fonts/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
