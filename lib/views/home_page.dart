@@ -7,6 +7,7 @@ import 'package:uis_by_mopi/views/courses_app_2.dart';
 import 'package:uis_by_mopi/views/login_screen.dart';
 import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
 
+import 'movies_app.dart';
 import 'view_xdl_servers.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,6 +40,10 @@ class _HomePageState extends State<HomePage> {
     Item(
       const CourseView(),
       'Course View',
+    ),
+    Item(
+      const MoviesApp(),
+      'Movies App',
     ),
     // Item(
     //   const CoursesView1(),
