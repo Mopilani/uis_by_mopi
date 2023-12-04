@@ -9,6 +9,7 @@ import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
 
 import 'movies_app.dart';
 import 'view_xdl_servers.dart';
+import 'whatsapp_chat_ui.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,6 +32,10 @@ class _HomePageState extends State<HomePage> {
     ),
     Item(
       const CarsShopView(),
+      'Cars Shop View',
+    ),
+    Item(
+      const WhatsappChatView(),
       'Cars Shop View',
     ),
     Item(
