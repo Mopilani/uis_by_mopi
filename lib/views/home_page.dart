@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     ),
     Item(
       const WhatsappChatView(),
-      'Cars Shop View',
+      'Whatsapp Chat',
     ),
     Item(
       const CoursesAppView(),
