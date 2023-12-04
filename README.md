@@ -10,6 +10,11 @@ A few resources to get you started if this is your first Flutter project:
 
 ## SDKs
 - Flutter 3
-- Dart 3 
+- Dart 3
+
+Basic Dependencies:
+- Get
+- Http
+- See the pubspec.yaml for more
 
 ### Clone the project and pub get it, and run it 
