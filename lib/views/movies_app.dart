@@ -19,13 +19,13 @@ class MoviesApp extends StatelessWidget {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(60.0),
-              child: Image.asset("assets/images/movies/simo.png"),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: ClipRRect(
+          //     borderRadius: BorderRadius.circular(60.0),
+          //     child: Image.asset("assets/images/movies/simo.png"),
+          //   ),
+          // ),
           const SizedBox(width: 8.0),
           const Icon(
             Icons.menu,
@@ -35,7 +35,9 @@ class MoviesApp extends StatelessWidget {
           const SizedBox(width: 8.0),
         ],
       ),
-      body: const _Body(),
+      body: const SingleChildScrollView(
+        child: _Body(),
+      ),
     );
   }
 }
@@ -156,19 +158,22 @@ class _Carousel extends StatelessWidget {
             padding: EdgeInsets.only(left: 150.0),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: _MovieCard(image: "assets/images/movies/karatekid.png", height: 350),
+              child: _MovieCard(
+                  image: "assets/images/movies/karatekid.png", height: 350),
             ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 80.0),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: _MovieCard(image: "assets/images/movies/suburra.png", height: 400),
+              child: _MovieCard(
+                  image: "assets/images/movies/suburra.png", height: 400),
             ),
           ),
           Align(
             alignment: Alignment.centerLeft,
-            child: _MovieCard(image: "assets/images/movies/interstellar.png", height: 450),
+            child: _MovieCard(
+                image: "assets/images/movies/interstellar.png", height: 450),
           ),
         ],
       ),
