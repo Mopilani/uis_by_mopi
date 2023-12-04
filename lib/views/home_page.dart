@@ -8,6 +8,7 @@ import 'package:uis_by_mopi/views/login_screen.dart';
 import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
 
 import 'movies_app.dart';
+import 'twitter_view.dart';
 import 'view_xdl_servers.dart';
 import 'whatsapp_chat_ui.dart';
 
@@ -37,6 +38,10 @@ class _HomePageState extends State<HomePage> {
     Item(
       const WhatsappChatView(),
       'Whatsapp Chat',
+    ),
+    Item(
+      const TwitterUiView(),
+      'Twitter UI',
     ),
     Item(
       const CoursesAppView(),
