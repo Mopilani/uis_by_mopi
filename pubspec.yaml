@@ -39,6 +39,7 @@ dependencies:
   ionicons: ^0.2.2
   google_fonts: ^5.1.0
   http: 
+  chat_bubbles: ^1.1.0
   # audioplayers: ^5.0.0
 
 dev_dependencies:
