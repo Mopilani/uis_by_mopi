@@ -6,6 +6,7 @@ import 'package:uis_by_mopi/views/club_house.dart';
 import 'package:uis_by_mopi/views/course_view.dart';
 import 'package:uis_by_mopi/views/courses_app.dart';
 import 'package:uis_by_mopi/views/courses_app_2.dart';
+import 'package:uis_by_mopi/views/instagram_view.dart';
 import 'package:uis_by_mopi/views/login_screen.dart';
 import 'package:uis_by_mopi/views/shoes_shoping_app_home.dart';
 import 'package:uis_by_mopi/views/movies_app.dart';
@@ -78,8 +79,8 @@ class _HomePageState extends State<HomePage> {
       'Club House',
     ),
     Item(
-      const ClubHouseView(),
-      'Club House',
+      const InstagramView(),
+      'Instagram',
     ),
   ];
 
