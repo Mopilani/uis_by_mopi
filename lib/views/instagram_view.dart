@@ -37,7 +37,7 @@ class InstagramView extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 16.0),
                   child: Image.asset(
-                    'assets/instagram.png',
+                    'assets/images/instagram/instagram.png',
                     color: Colors.white,
                     width: 130,
                   ),
@@ -67,32 +67,32 @@ class InstagramView extends StatelessWidget {
                   child: Row(
                     children: [
                       Story(
-                        image: "assets/users/0.jpeg",
+                        image: "assets/images/instagram/users/0.jpeg",
                         name: "user1",
                       ),
                       SizedBox(width: 16.0),
                       Story(
-                        image: "assets/users/1.jpeg",
+                        image: "assets/images/instagram/users/1.jpeg",
                         name: "user2",
                       ),
                       SizedBox(width: 16.0),
                       Story(
-                        image: "assets/users/2.jpeg",
+                        image: "assets/images/instagram/users/2.jpeg",
                         name: "user3",
                       ),
                       SizedBox(width: 16.0),
                       Story(
-                        image: "assets/users/0.jpeg",
+                        image: "assets/images/instagram/users/0.jpeg",
                         name: "user1",
                       ),
                       SizedBox(width: 16.0),
                       Story(
-                        image: "assets/users/1.jpeg",
+                        image: "assets/images/instagram/users/1.jpeg",
                         name: "user2",
                       ),
                       SizedBox(width: 16.0),
                       Story(
-                        image: "assets/users/2.jpeg",
+                        image: "assets/images/instagram/users/2.jpeg",
                         name: "user3",
                       ),
                     ],
@@ -109,18 +109,18 @@ class InstagramView extends StatelessWidget {
                 children: const [
                   Post(
                     userName: 'dancamdev',
-                    userImage: 'assets/users/dancamdev.png',
-                    image: 'assets/posts/0.png',
+                    userImage: 'assets/images/instagram/users/dancamdev.png',
+                    image: 'assets/images/instagram/posts/0.png',
                   ),
                   Post(
                     userName: 'dancamdev',
-                    userImage: 'assets/users/dancamdev.png',
-                    image: 'assets/posts/1.png',
+                    userImage: 'assets/images/instagram/users/dancamdev.png',
+                    image: 'assets/images/instagram/posts/1.png',
                   ),
                   Post(
                     userName: 'dancamdev',
-                    userImage: 'assets/users/dancamdev.png',
-                    image: 'assets/posts/2.jpg',
+                    userImage: 'assets/images/instagram/users/dancamdev.png',
+                    image: 'assets/images/instagram/posts/2.jpg',
                   ),
                 ],
               ),
@@ -247,7 +247,7 @@ class Post extends StatelessWidget {
               child: Row(
                 children: [
                   Image.asset(
-                    'assets/heart.png',
+                    'assets/images/instagram/heart.png',
                     color: Colors.white,
                     height: 30.0,
                   ),
