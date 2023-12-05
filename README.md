@@ -19,7 +19,7 @@ Basic Dependencies:
 
 ## Other Resources
 I have used some of:
-- (dancamdev Uis)[https://github.com/dancamdev/UIs]
+- (dancamdev Uis)[https://github.com/dancamdev/UIs] and modefied some of the code for best user experience.
 
 ### Clone the project and pub get it, and run normaly
 
