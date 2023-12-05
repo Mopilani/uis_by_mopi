@@ -74,6 +74,8 @@ flutter:
     - assets/images/amazon/
     - assets/images/clubhouse/
     - assets/images/instagram/
+    - assets/images/instagram/users/
+    - assets/images/instagram/posts/
     - assets/images/facebook/
     # - assets/fonts/
   #   - images/a_dot_burr.jpeg
