@@ -28,7 +28,7 @@ class FacebookView extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.asset("assets/facebook.png", height: 30.0),
+            Image.asset("assets/images/facebook/facebook.png", height: 30.0),
             const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -47,21 +47,21 @@ class FacebookView extends StatelessWidget {
           _Stories(),
           SizedBox(height: 8.0),
           _Post(
-            profileImage: "assets/user0.jpeg",
+            profileImage: "assets/images/facebook/user0.jpeg",
             text:
                 "This is the text for a random post, that I wrote while recording the timelapse and wasn't sure what to write :)",
             name: name0,
           ),
           SizedBox(height: 8.0),
           _Post(
-            profileImage: "assets/user1.jpeg",
+            profileImage: "assets/images/facebook/user1.jpeg",
             text:
                 "This is the text for a random post, that I wrote while recording the timelapse and wasn't sure what to write :)",
             name: name1,
           ),
           SizedBox(height: 8.0),
           _Post(
-            profileImage: "assets/user2.jpeg",
+            profileImage: "assets/images/facebook/user2.jpeg",
             text:
                 "This is the text for a random post, that I wrote while recording the timelapse and wasn't sure what to write :)",
             name: name2,
@@ -204,21 +204,21 @@ class _Stories extends StatelessWidget {
           scrollDirection: Axis.horizontal,
           children: const [
             SizedBox(width: 16.0),
-            _Story(image: "assets/story0.jpeg", name: name0),
+            _Story(image: "assets/images/facebook/story0.jpeg", name: name0),
             SizedBox(width: 8.0),
-            _Story(image: "assets/story1.jpeg", name: name1),
+            _Story(image: "assets/images/facebook/story1.jpeg", name: name1),
             SizedBox(width: 8.0),
-            _Story(image: "assets/story2.jpeg", name: name2),
+            _Story(image: "assets/images/facebook/story2.jpeg", name: name2),
             SizedBox(width: 8.0),
-            _Story(image: "assets/story3.jpeg", name: name3),
+            _Story(image: "assets/images/facebook/story3.jpeg", name: name3),
             SizedBox(width: 8.0),
-            _Story(image: "assets/story0.jpeg", name: name0),
+            _Story(image: "assets/images/facebook/story0.jpeg", name: name0),
             SizedBox(width: 8.0),
-            _Story(image: "assets/story1.jpeg", name: name1),
+            _Story(image: "assets/images/facebook/story1.jpeg", name: name1),
             SizedBox(width: 8.0),
-            _Story(image: "assets/story2.jpeg", name: name2),
+            _Story(image: "assets/images/facebook/story2.jpeg", name: name2),
             SizedBox(width: 8.0),
-            _Story(image: "assets/story3.jpeg", name: name3),
+            _Story(image: "assets/images/facebook/story3.jpeg", name: name3),
             SizedBox(width: 16.0),
           ],
         ),
@@ -278,7 +278,7 @@ class _WhatsOnYourMindCard extends StatelessWidget {
                 child: SizedBox(
                   height: 60.0,
                   width: 60.0,
-                  child: Image.asset("assets/dancamdev.png"),
+                  child: Image.asset("assets/images/facebook/dancamdev.png"),
                 ),
               ),
               const SizedBox(width: 16.0),
