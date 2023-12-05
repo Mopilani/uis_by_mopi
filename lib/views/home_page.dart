@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:uis_by_mopi/views/amazon_view.dart';
 import 'package:uis_by_mopi/views/cars_shop_view.dart';
+import 'package:uis_by_mopi/views/club_house.dart';
 import 'package:uis_by_mopi/views/course_view.dart';
 import 'package:uis_by_mopi/views/courses_app.dart';
 import 'package:uis_by_mopi/views/courses_app_2.dart';
@@ -68,13 +69,17 @@ class _HomePageState extends State<HomePage> {
       const AmazonView(),
       'Amazon App',
     ),
-    // Item(
-    //   const CoursesView1(),
-    //   'Courses App 2',
-    // ),
     Item(
       const LoginScreen(),
       'Login Screen',
+    ),
+    Item(
+      const ClubHouseView(),
+      'Club House',
+    ),
+    Item(
+      const ClubHouseView(),
+      'Club House',
     ),
   ];
 
